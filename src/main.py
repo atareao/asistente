@@ -23,17 +23,21 @@
 
 import asyncio
 import os
+from datetime import datetime
 from dotenv import load_dotenv
 from telegram import Bot
 
 
-async def main(token):
+async def main(token, chat_id):
     bot = Bot(token)
     print(await bot.get_me())
     print(await bot.get_updates())
+    msg = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")
+    print(await bot.send_message(msg, chat_id))
 
 
 if __name__ == "__main__":
     load_dotenv()
     token = os.getenv("TOKEN")
-    asyncio.run(main(token))
+    chat_id = os.getenv("CHAT_ID")
+    asyncio.run(main(token, chat_id))

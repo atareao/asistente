@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+  asistente:
+    image: atareao/atareao:1
+    init: true
+    restart: unless-stopped
+    env_file:
+      - ./.env

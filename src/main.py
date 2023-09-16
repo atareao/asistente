@@ -28,6 +28,7 @@ import re
 from datetime import datetime
 from dotenv import load_dotenv
 from telegram import Bot
+from openmeteo import OpenMeteoClient
 
 
 async def main(token, chat_id):
@@ -41,12 +42,23 @@ async def main(token, chat_id):
         response = await bot.get_updates()
         if response["ok"] and response["result"]:
             for item in response["result"]:
-                if "message" in item:
+                if "message" in item and "text" in item["message"]:
                     username = item["message"]["from"]["username"]
                     if re.match("^/hora", item["message"]["text"]):
                         hora = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")
                         msg = f"{username}, son las {hora}"
                         logging.debug(await bot.send_message(msg, chat_id))
+                elif "message" in item and "location" in item["message"]:
+                    latitude =  item["message"]["location"]["latitude"]
+                    longitude =  item["message"]["location"]["longitude"]
+                    weather = await OpenMeteoClient.get_current_weather(
+                            latitude=latitude, longitude=longitude)
+                    if weather and "current_weather" in weather:
+                        current = weather["current_weather"]
+                        temperature = current["temperature"]
+                        icon = OpenMeteoClient.get_icon(current["weathercode"])
+                    msg = f"{icon} {temperature} ºC"
+                    logging.debug(await bot.send_message(msg, chat_id))
 
 
 if __name__ == "__main__":

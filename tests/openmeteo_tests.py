@@ -22,34 +22,15 @@
 # SOFTWARE.
 
 
-import os
 import unittest
-from dotenv import load_dotenv
 
-from telegram import Bot
+from openmeteo import OpenMeteoClient
 
 
-class TestTelegramBot(unittest.IsolatedAsyncioTestCase):
+class TestOpenMeteoClient(unittest.IsolatedAsyncioTestCase):
 
-    def setUp(self) -> None:
-        load_dotenv()
-        token = os.getenv("TOKEN", "")
-        self.chat_id = int(os.getenv("CHAT_ID", 0))
-        update_offset = 0
-
-        self.bot = Bot(token, update_offset)
-
-    async def test_get_me(self):
-        response = await self.bot.get_me()
-        self.assertIsNotNone(response)
-
-    async def test_get_updates(self):
-        response = await self.bot.get_updates()
-        self.assertIsNotNone(response)
-
-    async def test_send_message(self):
-        text = "Este es un mensaje de prueba"
-        response = await self.bot.send_message(text, self.chat_id)
+    async def test_get_current_weather(self):
+        response = await OpenMeteoClient.get_current_weather(39.3626, -0.4117)
         self.assertIsNotNone(response)
 
 

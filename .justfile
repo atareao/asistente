@@ -27,6 +27,10 @@ run:
                --env-file .env \
                {{user}}/{{name}}:latest
 
+
+stop:
+    docker stop {{name}}
+
 exec:
     docker run --rm \
                -it \

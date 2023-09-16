@@ -24,6 +24,7 @@
 import asyncio
 import logging
 import os
+import re
 from datetime import datetime
 from dotenv import load_dotenv
 from telegram import Bot
@@ -42,8 +43,10 @@ async def main(token, chat_id):
             for item in response["result"]:
                 if "message" in item:
                     username = item["message"]["from"]["username"]
-                    msg = f"Hola {username}"
-                    logging.debug(await bot.send_message(msg, chat_id))
+                    if re.match("^/hora", item["message"]["text"]):
+                        hora = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")
+                        msg = f"{username}, son las {hora}"
+                        logging.debug(await bot.send_message(msg, chat_id))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,3 @@
+debugpy
+aiohttp
+python-dotenv

@@ -23,15 +23,19 @@
 
 import aiohttp
 import logging
+import os
+import json
 
 logger = logging.getLogger(__name__)
+
+CURDIR = os.path.realpath(os.path.dirname(__file__))
+CONFIG = os.path.join(CURDIR, "config.json")
 
 
 class Bot:
     """A Telegram Bot"""
 
-    def __init__(self, token: str, update_offset: int = 0,
-                 update_timeout: int = 60) -> None:
+    def __init__(self, token: str, update_timeout: int = 60) -> None:
         """Init the bot
 
         Parameters
@@ -45,8 +49,23 @@ class Bot:
         """
         logger.debug("__init__")
         self._url = f"https://api.telegram.org/bot{token}"
-        self._update_offset = update_offset
         self._update_timeout = update_timeout
+        self._read_config()
+
+    def _read_config(self) -> None:
+        if os.path.exists(CONFIG):
+            with open(CONFIG, "r") as fr:
+                config = json.load(fr)
+                self._update_offset = config["offset"]
+        else:
+            self._update_offset = 0
+
+    def _save_config(self) -> None:
+        with open(CONFIG, "w") as fw:
+            config = {
+                "offset": self._update_offset
+            }
+            json.dump(config, fw)
 
     async def get_me(self) -> dict:
         """Get info about the bot
@@ -72,7 +91,13 @@ class Bot:
             "offset": self._update_offset,
             "timeout": self._update_timeout
         }
-        return await self._get("getUpdates", params)
+        response = await self._get("getUpdates", params)
+        logger.debug(f"Response: {response}")
+        if response["ok"] and response["result"]:
+            offset = max([item["update_id"] for item in response["result"]])
+            self._update_offset = offset + 1
+            self._save_config()
+        return response
 
     async def send_message(self, text: str, chat_id: int,
                            thread_id: int = 0) -> dict:

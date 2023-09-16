@@ -22,6 +22,7 @@
 # SOFTWARE.
 
 import asyncio
+import logging
 import os
 from datetime import datetime
 from dotenv import load_dotenv
@@ -30,14 +31,28 @@ from telegram import Bot
 
 async def main(token, chat_id):
     bot = Bot(token)
-    print(await bot.get_me())
-    print(await bot.get_updates())
+    logging.debug(await bot.get_me())
     msg = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")
-    print(await bot.send_message(msg, chat_id))
+    logging.debug(await bot.send_message(msg, chat_id))
+    msg = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")
+    logging.debug(await bot.send_message(msg, chat_id))
+    while True:
+        response = await bot.get_updates()
+        if response["ok"] and response["result"]:
+            for item in response["result"]:
+                if "message" in item:
+                    username = item["message"]["from"]["username"]
+                    msg = f"Hola {username}"
+                    logging.debug(await bot.send_message(msg, chat_id))
 
 
 if __name__ == "__main__":
     load_dotenv()
     token = os.getenv("TOKEN")
     chat_id = os.getenv("CHAT_ID")
+    log_level = logging.getLevelName(os.getenv("LOG_LEVEL", "DEBUG"))
+    logging.basicConfig(
+        level=log_level,
+        format="%(asctime)s - %(levelname)s: %(message)s"
+    )
     asyncio.run(main(token, chat_id))

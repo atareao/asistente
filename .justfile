@@ -17,9 +17,10 @@ build:
                  .
 
 push:
-    docker push --all-tags {{user}}/{{name}}
+    docker push {{user}}/{{name}}:{{version}}
+    docker push {{user}}/{{name}}:latest
 
-run:
+start:
     docker run --rm \
                --init \
                --name {{name}} \
@@ -39,6 +40,9 @@ exec:
                --env-file .env \
                {{user}}/{{name}}:latest \
                sh
+
+run:
+    python ./src/main.py
 
 test:
     python -m unittest discover -s tests -p "*.py"

@@ -35,7 +35,7 @@ CONFIG = os.path.join(CURDIR, "config.json")
 class Bot:
     """A Telegram Bot"""
 
-    def __init__(self, token: str, update_timeout: int = 60) -> None:
+    def __init__(self, token: str, update_timeout: int = 120) -> None:
         """Init the bot
 
         Parameters

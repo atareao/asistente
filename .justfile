@@ -28,6 +28,8 @@ start:
                --env-file .env \
                {{user}}/{{name}}:latest
 
+logs:
+    docker logs {{name}} -f
 
 stop:
     docker stop {{name}}

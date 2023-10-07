@@ -21,5 +21,4 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-source /opt/venv/bin/activate
 python /app/main.py

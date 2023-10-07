@@ -44,7 +44,7 @@ exec:
                sh
 
 run:
-    python ./src/main.py
+    poetry run python src/main.py
 
 test:
-    python -m unittest discover -s tests -p "*.py"
+    poetry run pytest tests/*

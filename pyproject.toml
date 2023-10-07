@@ -12,8 +12,11 @@ aiohttp = "^3.8.5"
 python-dotenv = "^1.0.0"
 
 [tool.poetry.group.dev.dependencies]
-python-dotenv = "^1.0.0"
 debugpy = "^1.8.0"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.2"
 
 [build-system]
 requires = ["poetry-core"]
